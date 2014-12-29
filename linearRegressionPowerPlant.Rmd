@@ -1,0 +1,55 @@
+---
+title: "Linear regression - Power plant data set"
+author: "FdR"
+date: "29 December 2014"
+output: html_document
+---
+
+This post is an attempt to use this article from [Data Perspective](http://www.dataperspective.info/2014/10/regression-analysis-using-r.html) into a R Markdown document using, Github, ggplot2, dplyr, etc. 
+
+The article use the [data](https://archive.ics.uci.edu/ml/datasets/Combined+Cycle+Power+Plant) from a combine cycle power plant.  Once downloaded and put in the right folder, we can start working on it.
+Because, it is a .xlsx, let's first install the library, then load it.
+
+```{r}
+library(xlsx)
+```
+
+We then load the file.  Because this .xlsx file has several index (tab), we have to specify which tab, we want to use.
+````{r}
+data = read.xlsx("Folds5x2_pp.xlsx", sheetIndex=1)
+````
+
+Let's have a quick look at our data
+````{r}
+View(data)
+````
+
+which is quite similar to
+````{r}
+head(data)
+````
+
+We can focus on the first column (AT ~ Average Temperature)
+Any missing data?
+````{r}
+sum(is.na(data$AT))
+````
+The range of data?
+````{r}
+range(data$AT)
+````
+
+Plot the distribution of values for AT.
+````{r}
+library(ggplot2)
+p1 = ggplot(data, aes(AT)) + geom_density(color="blue") + scale_x_continuous(breaks = seq(1,40,2))
+````
+
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
