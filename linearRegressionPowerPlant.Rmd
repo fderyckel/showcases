@@ -41,11 +41,29 @@ p1 = ggplot(data, aes(AT)) + geom_density(color="blue") + scale_x_continuous(bre
 p1
 ```
 
+For a correlation analysis, we can run
+```{r}
+cor(data)
+```
+and see that the variables AT and PE are strongly negatively correlated.
 
-You can also embed plots, for example:
+When doing correlation analysis, one have to ensure that there aren't any correlation amonth the independant variables.  
 
-```{r, echo=FALSE}
-plot(cars)
+
+While doing multiple regression analysis, it is always better (whenever possible) to split our data into a training set and a testing set.  We can do this in the following way
+```{r}
+rand = data[sample(nrow(data)),]
+training = rand[1:6500,]
+testing = rand[6501:9568,]
+```
+Basically we shuffle all the row in the dataset `data`, then assign part of it to a training set, and another part to a testing set.
+
+```{r}
+model1 = lm(PE ~ AT+V+AP+RH, data = training)
+summary(model1)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+pred = predict(model1, testing[,1:4])
+```
+
