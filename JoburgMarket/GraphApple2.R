@@ -65,11 +65,11 @@ dfCPP <- rbind(cpp70, cpp100, cpp120, cpp150)
 
 
 #Now we graph the data.
-p120 <- ggplot(df120, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for count 120-135")
+p120 <- ggplot(df120, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for count 120-135 (in Zar)")
 p70 <- ggplot(df70, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for count 70-90")
 p100 <- ggplot(df100, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for count 100-110")
-pcpp <- ggplot(dfCPP, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for Cripps Pink")
-pgrs <- ggplot(dfGRS, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for Granny Smith")
+pcpp <- ggplot(dfCPP, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for Cripps Pink (in Zar)")
+pgrs <- ggplot(dfGRS, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for Granny Smith (in Zar)")
 
 ##TODO: p100, p70, p150, pcpp, pgrs, pgld, pcpr, etc.
 
