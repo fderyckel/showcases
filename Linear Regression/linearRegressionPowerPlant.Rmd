@@ -1,5 +1,5 @@
 ---
-title: "Linear regression - Power plant data set"
+title: "Linear regression.  Part II"
 author: "FdR"
 date: "29 December 2014"
 output: html_document

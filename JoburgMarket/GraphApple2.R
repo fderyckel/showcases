@@ -44,7 +44,6 @@ ski100 <- as.data.frame(data3 %>% filter(grepl("STARKING", ProductName)) %>% gro
 gld100 <- as.data.frame(data3 %>% filter(grepl("GOLDEN", ProductName)) %>% group_by(date) %>% summarise(AvgPrice = mean(avgprice)) %>% mutate(Variety= "Golden Delicious 100-110"))
 df100 <- rbind(grs100, cpp100, top100, brae100, fuj100, ski100, gld100)
 
-
 #now for the count 150 to 165 & 180
 data4 <- apples %>% filter(grepl("150$|165$|180$", ProductName), tvaluesold >= 10000)
 grs150 <- as.data.frame(data4 %>% filter(grepl("GRANNY", ProductName)) %>% group_by(date) %>% summarise(AvgPrice = mean(avgprice)) %>% mutate(Variety= "Granny 150-180"))
@@ -56,20 +55,22 @@ ski150 <- as.data.frame(data4 %>% filter(grepl("STARKING", ProductName)) %>% gro
 gld150 <- as.data.frame(data4 %>% filter(grepl("GOLDEN", ProductName)) %>% group_by(date) %>% summarise(AvgPrice = mean(avgprice)) %>% mutate(Variety= "Golden Delicious 150-180"))
 df150 <- rbind(grs150, cpp150, top150, brae150, fuj150, ski150, gld150)
 
-
+#create the df for each of the variety
 dfGRS <- rbind(grs70, grs100, grs120, grs150)
 dfCPP <- rbind(cpp70, cpp100, cpp120, cpp150)
-
+dfTOP <- rbind(top70, top100, top120, top150)
+dfGLD <- rbind(gld70, gld100, gld120, gld150)
+dfSKI <- rbind(ski70, ski100, ski120, ski150)
 
 ##TODO: do  dftop, dfgld, dfski, dfgrs
 
-
 #Now we graph the data.
 p120 <- ggplot(df120, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for count 120-135 (in Zar)")
-p70 <- ggplot(df70, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for count 70-90")
-p100 <- ggplot(df100, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for count 100-110")
+p70 <- ggplot(df70, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for count 70-90 (in Zar)")
+p100 <- ggplot(df100, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for counts 100-110 (in Zar)")
 pcpp <- ggplot(dfCPP, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for Cripps Pink (in Zar)")
 pgrs <- ggplot(dfGRS, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for Granny Smith (in Zar)")
+pski <- ggplot(dfSKI, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for Starking (in Zar)") 
+ptop <- ggplot(dfTOP, aes(date, AvgPrice, group=Variety, color=Variety)) + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Date") + labs(title="Apples price over time", x="Dates", y="Average price for Topred (in Zar)")
 
-##TODO: p100, p70, p150, pcpp, pgrs, pgld, pcpr, etc.
 
