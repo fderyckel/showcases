@@ -1,0 +1,69 @@
+---
+title: "Linear regression.  Part II"
+author: "FdR"
+date: "29 December 2014"
+output: html_document
+---
+
+This post is an attempt to use this article from [Data Perspective](http://www.dataperspective.info/2014/10/regression-analysis-using-r.html) into a R Markdown document using, Github, ggplot2, dplyr, etc. 
+
+The article use the [data](https://archive.ics.uci.edu/ml/datasets/Combined+Cycle+Power+Plant) from a combine cycle power plant.  Once downloaded and put in the right folder, we can start working on it.
+Because, it is a .xlsx, let's first install the library, then load it.
+
+```{r, message=FALSE}
+library(xlsx)
+```
+
+We then load the file.  Because this .xlsx file has several index (tab), we have to specify which tab, we want to use.
+```{r}
+data = read.xlsx("Folds5x2_pp.xlsx", sheetIndex=1)
+```
+
+which is quite similar to
+```{r}
+head(data)
+```
+
+We can focus on the first column (AT ~ Average Temperature)
+Any missing data?
+```{r}
+sum(is.na(data$AT))
+```
+The range of data?
+```{r}
+range(data$AT)
+```
+
+Plot the distribution of values for AT.
+```{r}
+library(ggplot2)
+p1 = ggplot(data, aes(AT)) + geom_density(color="blue") + scale_x_continuous(breaks = seq(1,40,2))
+p1
+```
+
+For a correlation analysis, we can run
+```{r}
+cor(data)
+```
+and see that the variables AT and PE are strongly negatively correlated.
+
+When doing correlation analysis, one have to ensure that there aren't any correlation amonth the independant variables.  
+
+
+While doing multiple regression analysis, it is always better (whenever possible) to split our data into a training set and a testing set.  We can do this in the following way
+```{r}
+rand = data[sample(nrow(data)),]
+training = rand[1:6500,]
+testing = rand[6501:9568,]
+```
+Basically we shuffle all the row in the dataset `data`, then assign part of it to a training set, and another part to a testing set.
+
+```{r}
+model1 = lm(PE ~ AT+V+AP+RH, data = training)
+summary(model1)
+```
+
+```{r}
+pred = predict(model1, testing[,1:4])
+```
+
