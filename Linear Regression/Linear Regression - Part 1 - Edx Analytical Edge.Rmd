@@ -1,10 +1,14 @@
 ---
 output:
+  word_document: default
+  pdf_document:
+    highlight: tango
+    toc: yes
+    toc_depth: 3
   html_document:
     fig_caption: yes
     theme: readable
     toc: yes
-  word_document: default
 ---
 ---
 title: "Linear Regression - Part 1 - Edx Analytical Edge"
@@ -12,7 +16,8 @@ author: "FdR"
 date: "3 January 2015"
 output: html_document
 --- 
-This document is inspired and use the EDx course - Analytical Edge resources.
+This document is inspired and use the *EDx course - Analytical Edge* resources.
+
 Linear regression is one of the easiest tool in the predicitve analytics field.  This paper intends to show by example how to make it works with R using the great libraries of dplyr, ggplot2 whenever necessary.  
 
 ##Single variable regression.
@@ -37,8 +42,8 @@ Some ways to assess how good our model is to:
     + problem: SSE is dependent of N.  SSE will naturally increase as N increase
 2.  compute the RMSE (the root mean squared error)
     + RMSE = $\sqrt {\frac {SSE} {N}}$
-    + + Also a good model will minimize SSE
-    + It depends of the unit of the independent variable
+    + Also a good model will minimize SSE
+    + It depends of the unit of the dependent variable.  It is like the average error the model is making (in term of the unit of the dependent variable)
 3.  compute $R^2$
     + It compare the models to a baseline model
     + $R^2$ is **unitless** and **universaly** interpretable
@@ -46,8 +51,7 @@ Some ways to assess how good our model is to:
 
 > $R^2 = 1 - \frac {SSE} {SST}$
 
-###In practice.
-####First example.  Predicting wine price.
+###First example.  Predicting wine price.
 The wine.csv file is used in the class.  
 
 Let's load it and then have a quick look at its structure.
@@ -59,7 +63,7 @@ head(wine)
 
 We use the `lm` function to find our linear regression model.  We use *AGST* as the independent variable while the *price* is the dependent variable.
 ```{r}
-model1 = lm(Price ~ AGST,data=wine)
+model1 = lm(Price ~ AGST, data = wine)
 summary(model1)
 ```
 
@@ -79,31 +83,56 @@ r_squared
 We can now plot the observations and the line of regression; and see how the linear model fits the data.
 ```{r}
 library(ggplot2)
-ggplot(wine, aes(AGST, Price)) + geom_point(col="blue") + geom_smooth(method="lm", col="red")
+ggplot(wine, aes(AGST, Price)) + geom_point(col = "blue") + geom_smooth(method = "lm", col = "red")
 ```
 
 It is always nice to see how our residuals are distributed.  
 We use the `ggplot2` library and the `fortify` function which transform the `summary(model1)` into a data frame usable for plotting. 
 ```{r}
 model1 <- fortify(model1)
-ggplot(model1, aes(.fitted, .resid)) + geom_point() + geom_hline(yintercept = 0, col = "red", linetype = "dashed") + xlab("Fitted values") + ylab("Residuals") + ggtitle("Plot of the residuals in function of the fitted values")
+p <- ggplot(model1, aes(.fitted, .resid)) + geom_point() + geom_hline(yintercept = 0, col = "red", linetype = "dashed") 
+p <- p + xlab("Fitted values") + ylab("Residuals") + ggtitle("Plot of the residuals in function of the fitted values")
+p
 ```
 
 
 ##Multi-variables regression.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Instead of just considering one variable as predictor, we'll add a few more variables to our model with the idea to increase its predictive ability.  
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+We have to be cautious in adding more variables.  Too many variable might give a high $R^2$ on our training data, but this not be the case as we switch to our testing data.
+
+The general equations can be expressed as
+
+> $y^i = \beta_{0} + \beta_{1} x_{1}^i + \beta_{2} x_{2}^i + \ldots + \beta_{k} x_{k}^i + \epsilon^i$
+
+when there are k predictors variables.
+
+There are a bit of trials and errors to make while trying to fit mutliple variables into a model, but a rule of thumb would be to include most of the variable (all these that would make sense) and then take out the ones that are not very significant using the `summary(modelx)`
+
+###First example.  Predicting wine price.
+We continue here with the same dataset, *wine.csv*.  
+First, we can see how each variable is correlated with each other ones, using
+```{r}
+cor(wine)
+```
+by default, R uses the Pearson coefficient of correlation.   
+So let's start by using all variables.  
+```{r}
+model2 <- lm(Price ~ Year + WinterRain + AGST + HarvestRain + Age + FrancePop, data = wine)
+summary(model2)
+```
+While doing so, we notice that the variable *Age* has NA (issues wiht missing data?) and that the variable *FrancePop* isn't very predictive of the price of wine.  So we can refine our models, by taking out these 2 variables, and as we'll see, it won't affect much our $R^2$ value.  Note that with multiple variables regression, it is important to look at the **Adjusted R-squared** as it take into consideration the amount of variables in the model.
+```{r}
+model3 <- lm(Price ~ Year + WinterRain + AGST + HarvestRain, data = wine)
+summary(model3)
+```
+
+Although it isn't now feasible to graph in 2D the *Price* in function of the other variables, we can still graph our residuals.  
 
 ```{r}
-summary(cars)
+model3 <- fortify(model3)
+ggplot(model3, aes(.fitted, .resid)) + geom_point() + geom_hline(yintercept = 0, col = "red", linetype = "dashed") + xlab("Fitted values") + ylab("Residuals") + ggtitle("Plot of the residuals in function of the fitted values (multiple variables)")
+
 ```
 
-You can also embed plots, for example:
-
-```{r, echo=FALSE}
-plot(cars)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
