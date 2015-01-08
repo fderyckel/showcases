@@ -46,5 +46,6 @@ apples <- rbind(df70, df100, df120)
 
 
 #Now we graph the data.
-ggplot(apples, aes(date, AvgPrice, color=Variety)) + geom_line() + facet_grid(Count ~ .) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(title="Apples price over time", x="Dates", y="Average price (in Zar)")
-ggplot(apples, aes(date, AvgPrice, color=Count)) + geom_line() + facet_grid(Variety ~ .) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(title="Apples price over time", x="Dates", y="Average price (in Zar)")
+p1 <- ggplot(apples, aes(date, AvgPrice, color=Variety)) + geom_line() + facet_grid(Count ~ .) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(title="Apples price over time", x="Dates", y="Average price (in Zar)")
+p2 <- ggplot(apples, aes(date, AvgPrice, color=Count)) + geom_line() + facet_grid(Variety ~ .) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(title="Apples price over time", x="Dates", y="Average price (in Zar)")
+coor <- coord_cartesian(ylim = c(150, 250))
