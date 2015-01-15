@@ -33,4 +33,8 @@ map1 <- full_join(math, read)
 map2 <- full_join(map1, lang)
 map <- map2
 
-
+#count how many missing values for each test
+#or how many kids didn't do their test
+sum(is.na(map$mathRIT))
+sum(is.na(map$langRIT))
+sum(is.na(map$readRIT))
