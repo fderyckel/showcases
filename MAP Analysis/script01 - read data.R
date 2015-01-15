@@ -38,3 +38,6 @@ map <- map2
 sum(is.na(map$mathRIT))
 sum(is.na(map$langRIT))
 sum(is.na(map$readRIT))
+
+#save everything into a new .csv file
+write.table(map, file="map.csv", sep=",", col.names=T, row.names=F)
