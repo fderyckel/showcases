@@ -1,14 +1,13 @@
 ---
 output:
-  word_document: default
   pdf_document:
-    highlight: tango
     toc: yes
     toc_depth: 3
   html_document:
     fig_caption: yes
     theme: readable
     toc: yes
+  word_document: default
 ---
 ---
 title: "Linear Regression - Part 1 - Edx Analytical Edge"
@@ -32,7 +31,8 @@ where:
 * $\beta_{0}$ is the intercept coefficient
 * $\beta_{1}$ is the regression coefficient for the dependent variable
 * $x^i$ is the $i^{th}$ observation of the independent variable 
-* $\epsilon^i$ is the error term for the $i^{th}$ observation.  It basically is the difference in therm of y between the observed value and the estimated value.  It is also called the residuals. A good model minimize these errors.
+* $\epsilon^i$ is the error term for the $i^{th}$ observation.  It basically is the difference in therm of y between the observed value and the estimated value.  It is also called the residuals. A good model minimize these errors. ^[Remember that the error term, $\epsilon^i$, in the simple linear regression model is independent of x, and is normally distributed, with zero mean and constant variance.]
+
 
 Some ways to assess how good our model is to:
 
@@ -83,14 +83,16 @@ r_squared
 We can now plot the observations and the line of regression; and see how the linear model fits the data.
 ```{r}
 library(ggplot2)
-ggplot(wine, aes(AGST, Price)) + geom_point(col = "blue") + geom_smooth(method = "lm", col = "red")
+ggplot(wine, aes(AGST, Price)) + geom_point(shape = 1, col = "blue") + geom_smooth(method = "lm", col = "red")
 ```
+By default, the `geom_smooth()` will use a 95% confidence interval (which is the grey-er area on the graph).  There are 95% chance the line of regression will be within that zone for the whole population. 
 
 It is always nice to see how our residuals are distributed.  
 We use the `ggplot2` library and the `fortify` function which transform the `summary(model1)` into a data frame usable for plotting. 
 ```{r}
 model1 <- fortify(model1)
-p <- ggplot(model1, aes(.fitted, .resid)) + geom_point() + geom_hline(yintercept = 0, col = "red", linetype = "dashed") 
+p <- ggplot(model1, aes(.fitted, .resid)) + geom_point() 
+p <- p + geom_hline(yintercept = 0, col = "red", linetype = "dashed") 
 p <- p + xlab("Fitted values") + ylab("Residuals") + ggtitle("Plot of the residuals in function of the fitted values")
 p
 ```
@@ -132,7 +134,9 @@ Although it isn't now feasible to graph in 2D the *Price* in function of the oth
 
 ```{r}
 model3 <- fortify(model3)
-ggplot(model3, aes(.fitted, .resid)) + geom_point() + geom_hline(yintercept = 0, col = "red", linetype = "dashed") + xlab("Fitted values") + ylab("Residuals") + ggtitle("Plot of the residuals in function of the fitted values (multiple variables)")
+p <- ggplot(model3, aes(.fitted, .resid)) + geom_point()
+p <- p + geom_hline(yintercept = 0, col = "red", linetype = "dashed") + xlab("Fitted values")
+p <- p + ylab("Residuals") + ggtitle("Plot of the residuals in function of the fitted values (multiple variables)")
 
 ```
 
