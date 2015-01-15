@@ -1,6 +1,6 @@
 ##read the .txt file.  
 ## it is a tab separated values, and we have to make explicit the encoding
-map <- read.table("Documents/R/MAP Predictive Analytics/RawData/2009 09 Fall.txt", sep = "\t", header=T, fileEncoding="UTF-16")
+map <- read.table(source, sep = "\t", header=T, fileEncoding="UTF-16")
 
 #check its structure & view the first few rows
 str(data)
@@ -28,6 +28,9 @@ read <- data %>% filter(MeasurementScaleName == "Reading") %>%
   select(-MeasurementScaleName, -GoalName1, -GoalName2, -GoalName3, -GoalName4, -GoalName5, -GoalName6, -GoalName7, -GoalAdjective4, -GoalAdjective5, -GoalAdjective6, -GoalAdjective7, -GoalRITScore4, -GoalRITScore5, -GoalRITScore6, -GoalRITScore7) %>% 
   rename(ReadProcAdj = GoalAdjective1, LitTexAdj = GoalAdjective2, NFictTexAdj = GoalAdjective3)
 
-
+#join all these tables together
+map1 <- full_join(math, read)
+map2 <- full_join(map1, lang)
+map <- map2
 
 
