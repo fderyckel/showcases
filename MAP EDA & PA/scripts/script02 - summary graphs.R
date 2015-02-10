@@ -3,6 +3,7 @@
 data <- read.csv("location of .csv file")
 gr1 <- data %>% group_by(MeasurementScaleName, GradeName) %>% summarize(MeanRIT = mean(TestRITScore))
 
+#vertical bars for each grade with mean RIT Score for each of the 3 tests (ordered by tests)
 p1r <- ggplot(gr1, aes(GradeName, MeanRIT, fill=factor(GradeName))) + geom_bar(stat = "identity") 
   + coord_cartesian(ylim = c(150, 250))
   + facet_grid(MeasurementScaleName ~ .)
@@ -15,7 +16,7 @@ p1p <- ggplot(data, aes(factor(GradeName), TestPercentile, fill=factor(GradeName
   + labs(title = paste("Mean RIT score per test & grade level \n", data[1,5]), x = "Grade level", y = "Mean RIT score")
 
 
-#now, we do one with verticall bar, faceting with grade level, axis is factor of testname
+##vertical bars for each grade with mean RIT Score for each of the 3 tests (ordered by grade level)
 p2 <- gr1 %>% ggplot(aes(MeasurementScaleName, MeanRIT, fill = MeasurementScaleName)) + geom_bar(stat = "identity") 
   + coord_cartesian(ylim = c(150, 250))
   + theme(axis.ticks.x = element_blank(),axis.text.x = element_blank(), legend.title=element_blank())

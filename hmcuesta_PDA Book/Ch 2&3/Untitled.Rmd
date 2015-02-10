@@ -1,0 +1,26 @@
+---
+title: "Cuesta - Ch. 2 & 3"
+author: "FdR"
+date: "15 January 2015"
+output: html_document
+---
+
+Replace all empty cells in a dataframe by NA
+
+```{r}
+data$col2[data$col2 == ""] <- NA
+```
+
+
+Replace all the "e" in a df by z
+```{r}
+gsub("e", "z", df)
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
