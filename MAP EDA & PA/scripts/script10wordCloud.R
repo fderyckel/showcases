@@ -1,0 +1,21 @@
+library(tm)
+library(wordcloud)
+
+setwd("~/Documents/R/Portfolio/wordCloud Reports/")
+path <- dir("Comments/")
+text <- readLines(paste0("Comments/", path[3]))
+
+fdr <- Corpus(VectorSource(text))
+fdr <- tm_map(fdr, content_transformer(tolower))
+fdr <- tm_map(fdr, removePunctuation)
+fdr <- tm_map(fdr, removeWords, c(stopwords("english"), "semester"))
+fdr <- tm_map(fdr, stripWhitespace)
+dtm <- DocumentTermMatrix(fdr)
+m <- as.matrix(dtm)
+v <- sort(colSums(m), decreasing = T)
+words <- names(v)
+d <- data.frame(word = words, freq=v)
+
+png(paste0(path[3], ".png"))
+wordcloud(d$word, d$freq, scale = c(3.5, 0.4), min.freq = 5, random.order = F, colors = brewer.pal(8, "Dark2"))
+dev.off()
