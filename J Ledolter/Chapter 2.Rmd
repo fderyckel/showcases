@@ -1,0 +1,103 @@
+---
+title: "DATA MINING AND BUSINESS ANALYTICS WITH R"
+author: "FdR"
+date: "9 March 2015"
+output:
+  html_document:
+    fig_width: 6.7
+  pdf_document:
+    fig_height: 4
+    fig_width: 7
+---
+
+This document intends to follow the book **DATA MINING AND BUSINESS ANALYTICS WITH R** from *Johannes Ledolter*. We are taking his work and adapting it to fit the dplyr + ggplot2 + tidyr set of libraries, as well as others when appropriate.  
+
+## Chapter 2.  Processing the Information and Getting to Know Your Data
+
+### 2.1  2006 Birth data.  
+
+We first load the library *nutshell* which contains our dataset, then load it and have a quick look at it. 
+
+```{r}
+library(nutshell)
+library(dplyr)
+data(births2006.smpl)
+str(births2006.smpl)
+tbl_df(births2006.smpl)
+```
+There are 427,323 observations (ie. recorded births) in our dataset!  
+
+Our first graph is just about the frequency of birth in function of the day of the week.
+
+```{r}
+library(ggplot2)
+P1 <- ggplot(births2006.smpl, aes(x = DOB_WK)) + 
+  geom_bar() + 
+  scale_x_discrete(labels = c("Sun.", "Mon.", "Tues.", "Wed.", "Thur.", "Fri.", "Sat."), 
+                   limits = c(1:7)) + 
+  labs(title = "Frequency of births by day of the week", 
+       x = "Day of the week", y = "Frequency")
+P1
+```
+
+They are clearly less birth on the weekend!
+
+Or we can segregate by method of delivery and graph it that way. 
+
+````{r}
+table(births2006.smpl$DOB_WK, births2006.smpl$DMETH_REC)
+```
+
+We first re-order the levels in the `DMETH_REC` variable, so that the plot look pretty normal.
+```{r}
+births2006.smpl$DMETH_REC <- factor(births2006.smpl$DMETH_REC, 
+                                    levels = c("Vaginal", "C-section", "Unknown"))
+P2 <- ggplot(births2006.smpl, aes(x = DOB_WK, fill = DMETH_REC)) + 
+  geom_bar(position = "dodge") + 
+  scale_x_discrete(labels = c("Sun.", "Mon.", "Tues.", "Wed.", "Thur.", "Fri.", "Sat."), 
+                   limits = c(1:7)) + 
+  labs(title = "Frequency of births by day of the week", 
+       x="Day of the week", y = "Frequency", fill = "Method of \n delivery")
+P2
+```
+
+On the next graph, we are using `facet_grid()` to make 2 graphs. There is a bit of plumbing to do first tough. 
+```{r}
+data <- as.data.frame(table(births2006.smpl$DOB_WK, births2006.smpl$DMETH_REC))
+data3 <- filter(data, Var2 != "Unknown")
+P3 <- ggplot(data3, aes(x=Var1, y=Freq, fill = Var1)) + 
+  geom_bar(stat="identity") + facet_grid(.~ Var2) + 
+  guides(fill=F) + 
+  scale_x_discrete(labels = c("Sun.", "Mon.", "Tues.", "Wed.", "Thur.", "Fri.", "Sat.")) + 
+  labs(title = "Frequency of births by day of the week", 
+       x="Day of the week", y = "Frequency")
+P3
+```
+
+I think it might be slightly more interesting to actually compare the percentage of birth by vaginal or C-section on each day of the week.  
+```{r}
+library(tidyr)
+data4 <- data %>% spread(Var2, Freq)
+data4 <- data4 %>% mutate(Total = Vaginal + data4[,3] + Unknown) %>% 
+  mutate(VPerc = Vaginal / Total, CPerc = data4[,3] / Total) %>% 
+  select(1, 6:7) %>% 
+  gather("Method", "Percentage", VPerc:CPerc)
+P4 <- ggplot(data4, aes(x = Var1, y = Percentage, fill = Method)) + 
+  geom_bar(stat = "identity", position = "dodge") + 
+  scale_x_discrete(labels = c("Sun.", "Mon.", "Tues.", "Wed.", "Thur.", "Fri.", "Sat.")) + 
+  labs(title = "Frequency of births by day of the week", 
+       x="Day of the week", y = "Frequency", fill = "Method of \n delivery")
+P4
+```
+
+Finally I have always wondered about this.  
+```{r}
+data5 <- as.data.frame(table(births2006.smpl$DOB_MM))
+ggplot(data5, aes(x = Var1, y=Freq)) + 
+  geom_bar(stat="identity") + 
+  coord_cartesian(ylim = c(30000, 40000)) + 
+  scale_x_discrete(labels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec")) + 
+  labs(title = "Frequency of births by Month of the Year", 
+       x="Month of the year", y = "Frequency")
+```
+

@@ -1,0 +1,72 @@
+---
+title: "TextAnalysis - MYP reports S1 2014-2015"
+author: "FdR"
+date: "3 March 2015"
+output:
+  word_document:
+    fig_caption: yes
+---
+
+After downloading the .csv file from Managebac about the semester 1 report for the 2014-2015 academic year, we have copied-paste all the comments into a .txt file ready for text analysis (aka text mining).  
+
+Because text analysis is case sensitive, we put everything into lower case, we then remove all punctuation signs, we then also remove all the **stopwords**.  Stopwords are all the common words like: is, he, she, I , and, etc.  Finally we also remove all the extra space that are unecessary.  
+
+```{r, echo=FALSE}
+library(tm)
+text <- readLines("~/Documents/R/KG reports/MYPReportsALL.txt")
+fdr <- Corpus(VectorSource(text))
+fdr <- tm_map(fdr, content_transformer(function(x) iconv(x, to='UTF-8-MAC', sub='byte')), mc.cores=1)
+fdr <- tm_map(fdr, content_transformer(tolower))
+fdr <- tm_map(fdr, removePunctuation)
+fdr <- tm_map(fdr, removeWords, c(stopwords("english"), "semester"))
+fdr <- tm_map(fdr, stripWhitespace)
+```
+
+This already strip the comments from a lots of noise.  
+Although reading them doesn't flow as well, the comments now look like this
+
+```{r, echo=FALSE}
+inspect(fdr[c(2, 723, 1345)])
+```
+
+Let's see the 30 most frequently used words in this S1 reports comments.  On top is the word, and the number below it is how many timed that word appeared in the comments.  
+```{r, echo=FALSE}
+dtm <- DocumentTermMatrix(fdr)
+madtm <- as.matrix(dtm)
+v <- sort(colSums(madtm), decreasing = T)
+head(v, 30)
+```
+
+A wordle would be quite nice to display in a visually more appealing way these frequent words.  So let's build one for all words that appears 60 or more times on all the comments.
+
+```{r, echo=FALSE, fig.align='center', fig.height=9, fig.width=12}
+library(wordcloud)
+words <- names(v)
+d <- data.frame(word = words, freq=v)
+wordcloud(d$word, d$freq, scale = c(9, 0.7), min.freq = 60, max.words=150, random.order = F, colors = brewer.pal(8, "Dark2"))
+```
+
+Now, with the wordle (which displays over 100 words), one can see that some words that are quite similar in meaning are appearing more than once; for instance: *make*, *making* or *improves*, *improving*, or again *discuss* and *discussion*.  There is a function in text mining to stem the words.  By stemming our corpus, we can now redo our working our high frequency words.
+
+```{r, echo=FALSE}
+dictCorpus <- fdr
+fdr <- tm_map(fdr, stemDocument)
+dtm <- DocumentTermMatrix(fdr)
+madtm <- as.matrix(dtm)
+v <- sort(colSums(madtm), decreasing = T)
+head(v, 30)
+```
+
+Now we can really see education related concepts on top of that list.  
+
+Another thing one can do with text mining is to check how one concept is related (associated) to other concepts.  I have chosen the top 3 concepts for this: 
+
+```{r, echo=FALSE}
+findAssocs(dtm, c("work", "class", "improv"), 0.16)
+```
+
+Now finding association on report comments is a really skew process due to the fact that many teacher copy paste almost the same comments for many students.  An example of this is the concepts associated with the word *student*.  
+```{r, echo=FALSE}
+findAssocs(dtm, "student", 0.1)
+```
+The first 3 words *humor*, *principl* and *openmind* seems to have the highest association with the concept of *student*, but at looking at the reports, it all comes from one particular teacher who copied-pasted the same phrases over and over.  
