@@ -1,0 +1,1 @@
+df1 <- read.csv("cleanApples.csv")

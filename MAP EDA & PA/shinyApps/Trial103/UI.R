@@ -12,6 +12,7 @@ shinyUI(navbarPage("MAP results",
               selectInput("testname",           
                           "Select the test to visualize",
                           levels(mapdata$MeasurementScaleName)),
+              
               selectInput("termname",         
                            "Select the time the test was taken",
                            levels(mapdata$TermName)),

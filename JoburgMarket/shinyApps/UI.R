@@ -1,13 +1,20 @@
-# UI.R
+#Shiny UI
+
+library(shiny)
 
 shinyUI(navbarPage("Fruits on the Joburg market",
+                   
                    tabPanel("Apples",
                             sidebarLayout(
                               
                               sidebarPanel(
                                 selectInput("productname",
                                             "Select your product",
-                                            levels(apdata$ProductName)),
+                                            choices = levels(df1$Variety)
+                                            ),
+                                selectInput("count",
+                                            "Select your size",
+                                            choices = levels(df1$Count)),
                                 hr(),
                                 dateRangeInput("dateRange",
                                             "Select your dates",
